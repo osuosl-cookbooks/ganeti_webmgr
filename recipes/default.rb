@@ -27,16 +27,12 @@ directory node['ganeti_webmgr']['path'] do
   action :create
 end
 
-no_clone = node.chef_environment == "vagrant" &&
-  ::File.directory?(::File.join(node['ganeti_webmgr']['path'], '.git'))
-
 # clone the repo so we can run setup.sh to install
 git node['ganeti_webmgr']['path'] do
   repository node['ganeti_webmgr']['repository']
   revision node['ganeti_webmgr']['revision']
   user node['ganeti_webmgr']['owner']
   group node['ganeti_webmgr']['group']
-  # not_if { no_clone }
 end
 
 # The first value is for our custom config directory
