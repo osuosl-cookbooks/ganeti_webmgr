@@ -2,7 +2,7 @@
 driver:
   name: vagrant
   network:
-    - ["private_network", {ip: "33.33.33.110", adapter: 2}]
+    - ["private_network", {ip: "172.16.1.1", adapter: 2}]
 
 provisioner:
   name: chef_solo
