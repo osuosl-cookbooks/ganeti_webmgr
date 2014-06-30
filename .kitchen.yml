@@ -18,9 +18,6 @@ platforms:
 
 suites:
   - name: default
-    provisioner:
-      solo_rb:
-        environment: vagrant
     run_list:
       - recipe[ganeti_webmgr::default]
       - recipe[ganeti_webmgr::bootstrap_user]
@@ -34,9 +31,6 @@ suites:
           port: "8888"
 
   - name: mysql
-    provisioner:
-      solo_rb:
-        environment: vagrant
     run_list:
       - recipe[ganeti_webmgr::mysql]
       - recipe[ganeti_webmgr::bootstrap_user]
