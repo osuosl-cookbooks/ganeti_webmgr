@@ -47,8 +47,8 @@ default['nginx']['default_site_enabled'] = false
 
 default['ganeti_webmgr']['application_name'] = 'ganeti_webmgr'
 default['ganeti_webmgr']['apache']['server_name'] = node['hostname']
-default['ganeti_webmgr']['apache']['user'] = "ganeti_webmgr"
-default['ganeti_webmgr']['apache']['group'] = "apache"
+default['ganeti_webmgr']['apache']['user'] = nil
+default['ganeti_webmgr']['apache']['group'] = nil
 default['ganeti_webmgr']['apache']['server_aliases'] = [node['fqdn']]
 
 default['ganeti_webmgr']['apache']['processes'] = 4

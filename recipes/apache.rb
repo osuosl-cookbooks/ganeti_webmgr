@@ -30,15 +30,20 @@ execute "collect_static" do
 end
 
 # Create server user if necessary and set group
-user gwm['apache']['user'] do
-  gid gwm['apache']['group']
-  action :create
+# Can not use only_if as it evaluates the user resource first
+if !!gwm['apache']['user']
+  user gwm['apache']['user'] do
+    gid gwm['apache']['group']
+    system true
+    action :create
+  end
 end
 
 # Make sure the whoosh index path is writeable by the server
 directory node['ganeti_webmgr']['haystack_whoosh_path'] do
-  owner node['ganeti_webmgr']['apache']['user']
-  group node['ganeti_webmgr']['apache']['group']
+  owner node['ganeti_webmgr']['apache']['user'] || node['apache']['user']
+  group node['ganeti_webmgr']['apache']['group'] || node['apache']['group']
+  recursive true
   action :create
 end
 

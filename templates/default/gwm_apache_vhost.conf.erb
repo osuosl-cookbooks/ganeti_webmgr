@@ -3,7 +3,7 @@
     ServerName <%= @params[:server_name] %>
     ServerAlias <% @params[:server_aliases].each do |a| %><%= a %> <% end %>
 
-    WSGIDaemonProcess <%= @params[:wsgi_process_group] %> user=<%= @params[:user] %> processes=<%= @params[:processes] %> threads=<%= @params[:threads] %> python-path=<%= @params[:python_path] %>
+    WSGIDaemonProcess <%= @params[:wsgi_process_group] %> <% if @params[:user] %>user=<%= @params[:user] %><% end %> processes=<%= @params[:processes] %> threads=<%= @params[:threads] %> python-path=<%= @params[:python_path] %>
     WSGIProcessGroup <%= @params[:wsgi_process_group] %>
     WSGIScriptAlias / <%= @params[:wsgi_path] %>
 
