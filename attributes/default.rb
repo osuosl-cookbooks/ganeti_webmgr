@@ -47,9 +47,12 @@ default['nginx']['default_site_enabled'] = false
 
 default['ganeti_webmgr']['application_name'] = 'ganeti_webmgr'
 default['ganeti_webmgr']['apache']['server_name'] = node['hostname']
+default['ganeti_webmgr']['apache']['server_aliases'] = [node['fqdn']]
+
+# Set user for GWM server process if using the apache recipe
+# To use the default apache user, set these to nil
 default['ganeti_webmgr']['apache']['user'] = nil
 default['ganeti_webmgr']['apache']['group'] = nil
-default['ganeti_webmgr']['apache']['server_aliases'] = [node['fqdn']]
 
 default['ganeti_webmgr']['apache']['processes'] = 4
 default['ganeti_webmgr']['apache']['threads'] = 1
