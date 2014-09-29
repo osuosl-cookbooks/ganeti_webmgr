@@ -1,0 +1,62 @@
+---
+driver_config:
+  openstack_username: <%= ENV['OS_USERNAME'] %>
+  openstack_api_key: <%= ENV['OS_PASSWORD'] %>
+  openstack_auth_url: <%= ENV['OS_AUTH_URL'] %>
+  key_name: <%= ENV['OS_SSH_KEYPAIR'] %>
+  private_key_path: <%= ENV['OS_SSH_KEY'] %>
+  openstack_tenant: <%= ENV['OS_TENANT'] %>
+  floating_ip: <%= ENV['OS_FLOATING_IP'] %>
+  flavor_ref: <%= ENV['OS_FLAVOR_REF'] %>
+
+provisioner:
+  name: chef_solo
+  environments_path: environments
+  data_bags_path: "test/integration/data_bags"
+  encrypted_data_bag_secret_key_path: "encrypted_data_bag_secret"
+  attributes:
+    authorization:
+      sudo:
+        users:
+          - vagrant
+          - centos
+          - ubuntu
+    omnibus_updater:
+      disabled: true
+
+platforms:
+- name: centos-6.5
+  driver_plugin: openstack
+  driver_config:
+    username: centos
+    image_ref: "CentOS 6.5"
+- name: ubuntu-12.04
+  driver_plugin: openstack
+  driver_config:
+    username: ubuntu
+    image_ref: "Ubuntu 12.04"
+  run_list:
+    - recipe[apt::default]
+
+suites:
+  - name: default
+    provisioner:
+      solo_rb:
+        environment: vagrant
+    run_list:
+      - recipe[ganeti_webmgr::default]
+      - recipe[ganeti_webmgr::bootstrap_user]
+      - recipe[ganeti_webmgr::apache]
+    attributes:
+      ganeti_webmgr:
+        database:
+          engine: django.db.backends.sqlite3
+          name: /home/vagrant/gwm.db
+  - name: mysql
+    provisioner:
+      solo_rb:
+        environment: vagrant
+    run_list:
+      - recipe[ganeti_webmgr::mysql]
+      - recipe[ganeti_webmgr::bootstrap_user]
+      - recipe[ganeti_webmgr::apache]
