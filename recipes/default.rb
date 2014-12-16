@@ -78,7 +78,13 @@ execute "install_gwm" do
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   creates node['ganeti_webmgr']['install_dir']
+  action :nothing
+end
+
+ruby_block "setup_runner" do
+  block {}
   action :run
+  notifies :run, "execute[install_gwm]"
 end
 
 passwords = Chef::EncryptedDataBagItem.load("ganeti_webmgr", "passwords")
@@ -88,6 +94,13 @@ secret_key = node['ganeti_webmgr']['secret_key'] || passwords['secret_key']
 web_mgr_api_key = node['ganeti_webmgr']['web_mgr_api_key'] || passwords['web_mgr_api_key']
 
 config_file = ::File.join(node['ganeti_webmgr']['config_dir'], 'config.yml')
+
+directory node['ganeti_webmgr']['config_dir'] do
+  owner node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+  recursive true
+end
+
 template config_file do
   source "config.yml.erb"
   owner node['ganeti_webmgr']['user']
