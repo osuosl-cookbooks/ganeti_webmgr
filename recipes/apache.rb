@@ -29,11 +29,17 @@ execute "collect_static" do
   group node['ganeti_webmgr']['group']
 end
 
+if gwm['https_enabled']
+  template_name = 'gwm_apache_vhost_https.conf.erb'
+else
+  template_name = 'gwm_apache_vhost.conf.erb'
+end
+
 web_app gwm['application_name'] do
-  template 'gwm_apache_vhost.conf.erb'
+  template template_name
   server_name node['hostname']
   server_aliases gwm['apache']['server_aliases']
-  cookbook "ganeti_webmgr"
+  cookbook 'ganeti_webmgr'
   server_name gwm['apache']['server_name']
   app gwm
   processes gwm['apache']['processes']
