@@ -42,6 +42,7 @@ web_app gwm['application_name'] do
   server_aliases gwm['apache']['server_aliases']
   cookbook 'ganeti_webmgr'
   server_name gwm['apache']['server_name']
+  server_port gwm['apache']['server_port']
   app gwm
   processes gwm['apache']['processes']
   threads gwm['apache']['threads']
