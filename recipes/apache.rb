@@ -32,6 +32,7 @@ end
 
 if gwm['https_enabled']
   template_name = 'gwm_apache_vhost_https.conf.erb'
+  gwm['apache']['server_port'] = 443 unless gwm['apache']['server_port']
 else
   template_name = 'gwm_apache_vhost.conf.erb'
 end
