@@ -44,7 +44,6 @@ end
 
 web_app gwm['application_name'] do
   template template_name
-  server_name node['hostname']
   server_aliases gwm['apache']['server_aliases']
   cookbook 'ganeti_webmgr'
   server_name gwm['apache']['server_name']
