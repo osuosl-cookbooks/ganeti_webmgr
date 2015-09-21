@@ -98,6 +98,7 @@ template config_file do
   mode "0644"
   variables({
     :app => node['ganeti_webmgr'],
+    :rapi_connect_timeout => node['ganeti_webmgr']['rapi_connect_timeout'],
     :db_pass => db_pass,
     :secret_key =>  secret_key,
     :web_mgr_api_key => web_mgr_api_key

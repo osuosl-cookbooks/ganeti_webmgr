@@ -101,7 +101,9 @@ VNC_PROXY: "<%= @app['vnc_proxy'] %>"
 
 # This is how long gwm will wait before timing out when requesting data from the
 # ganeti cluster.
-RAPI_CONNECT_TIMEOUT: 3
+<% if @rapi_connect_timeout %>
+RAPI_CONNECT_TIMEOUT: "<%= @rapi_connect_timeout %>"
+<% end %>
 
 <% if @secret_key %>
 SECRET_KEY: "<%= @secret_key %>"
