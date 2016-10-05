@@ -60,7 +60,7 @@ ACCOUNT_ACTIVATION_DAYS: 7
 # Email settings for registration
 EMAIL_HOST: localhost
 EMAIL_PORT: 25
-DEFAULT_FROM_EMAIL: noreply@example.org
+DEFAULT_FROM_EMAIL: <%= @app["email_address"] %>
 
 # Whether users should be able to create their own accounts.
 # False if accounts can only be created by admins.

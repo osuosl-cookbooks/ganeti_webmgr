@@ -75,3 +75,5 @@ default['ganeti_webmgr']['vncauthproxy']['ip'] = '0.0.0.0'
 
 default['ganeti_webmgr']['vncauthproxy']['flashpolicy_enabled'] = true
 
+#Default email
+default['ganeti_webmgr']['email_address'] = 'noreply@osuosl.org'
