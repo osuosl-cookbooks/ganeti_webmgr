@@ -3,8 +3,8 @@ require 'serverspec'
 include Serverspec::Helper::Exec
 include Serverspec::Helper::DetectOS
 
-describe "install and start the vncauthproxy daemon" do
-  describe service("vncauthproxy") do
+describe 'install and start the vncauthproxy daemon' do
+  describe service('vncauthproxy') do
     it { should be_running }
   end
   # this will fail if you change the port

@@ -2,13 +2,13 @@ default['ganeti_webmgr']['path'] = '/opt/ganeti_webmgr_src'
 default['ganeti_webmgr']['user'] = nil
 default['ganeti_webmgr']['group'] = nil
 
-default['ganeti_webmgr']['repository'] = "https://github.com/osuosl/ganeti_webmgr"
+default['ganeti_webmgr']['repository'] = 'https://github.com/osuosl/ganeti_webmgr'
 default['ganeti_webmgr']['revision'] = 'develop'
 
-case node['platform']
-when 'redhat', 'centos', 'fedora', 'amazon', 'scientific'
+case node['platform_family']
+when 'rhel', 'fedora'
   default['ganeti_webmgr']['packages'] = ['libffi-devel', 'openssl-devel']
-when 'debian', 'ubuntu'
+when 'debian'
   default['ganeti_webmgr']['packages'] = ['libffi-dev', 'openssl-dev']
 else
   default['ganeti_webmgr']['packages'] = []
@@ -74,4 +74,3 @@ default['ganeti_webmgr']['vncauthproxy']['port'] = '8888'
 default['ganeti_webmgr']['vncauthproxy']['ip'] = '0.0.0.0'
 
 default['ganeti_webmgr']['vncauthproxy']['flashpolicy_enabled'] = true
-

@@ -5,6 +5,8 @@ license          'All rights reserved'
 description      'Installs/Configures Ganeti Web Manager'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.4.14'
+source_url       'https://github.com/osuosl-cookbooks/ganeti_webmgr'
+issues_url       'https://github.com/osuosl-cookbooks/ganeti_webmgr/issues'
 depends          'build-essential'
 depends          'python'
 depends          'git'

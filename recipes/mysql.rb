@@ -15,7 +15,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 
-
 # This Recipe should only be run in a development environment because
 # it installs MySQL locally, and adjusts a few MySQL settings.
 # Please use the default recipe in combination with the database recipe
@@ -24,12 +23,12 @@
 # Make sure our settings in Django are set correctly to mysql
 node.override['ganeti_webmgr']['database']['engine'] = 'django.db.backends.mysql'
 # install mysql server
-include_recipe "mysql::server"
+include_recipe 'mysql::server'
 
 directory node['mysql']['data_dir'] do
-  mode "0755"
+  mode '0755'
 end
 
 # Run the rest of our setup for GWM
-include_recipe "ganeti_webmgr::database"
-include_recipe "ganeti_webmgr::default"
+include_recipe 'ganeti_webmgr::database'
+include_recipe 'ganeti_webmgr::default'

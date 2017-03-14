@@ -15,11 +15,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 
-
 # Recipe to do database agnostic boostrapping
 # Creates a database, and a database user
 
-passwords = Chef::EncryptedDataBagItem.load("ganeti_webmgr", "passwords")
+passwords = Chef::EncryptedDataBagItem.load('ganeti_webmgr', 'passwords')
 
 db_host = node['ganeti_webmgr']['database']['host']
 db_port = node['ganeti_webmgr']['database']['port']
@@ -28,32 +27,32 @@ server_user = node['ganeti_webmgr']['db_server']['user'] || passwords['db_server
 server_password = node['ganeti_webmgr']['db_server']['password'] || passwords['db_server']['password']
 
 db_user = node['ganeti_webmgr']['database']['user']
-db_pass = node['ganeti_webmgr']['database']['password'] ||  passwords['db_password']
+db_pass = node['ganeti_webmgr']['database']['password'] || passwords['db_password']
 
 mysql_connection_info = {
-    :host => db_host,
-    :port => db_port,
-    :username => server_user || 'root',
-    :password => server_password
+  host: db_host,
+  port: db_port,
+  username: server_user || 'root',
+  password: server_password
 }
 
 # postgres example not tested:
 postgresql_connection_info = {
-  :host => db_host,
-  :username => server_user || 'postgres',
-  :password => server_password
+  host: db_host,
+  username: server_user || 'postgres',
+  password: server_password
 }
 
 case node['ganeti_webmgr']['database']['engine'].split('.').last
 when 'mysql'
-  include_recipe "mysql::client"
-  include_recipe "database::mysql"
+  include_recipe 'mysql::client'
+  include_recipe 'database::mysql'
   db_provider = Chef::Provider::Database::Mysql
   db_user_provider = Chef::Provider::Database::MysqlUser
   connection_info = mysql_connection_info
 when 'psycopg2', 'postgresql_psycopg2'
-  include_recipe "postgresql"
-  include_recipe "database::postgres"
+  include_recipe 'postgresql'
+  include_recipe 'database::postgres'
   db_provider = Chef::Provider::Database::Postgresql
   db_user_provider = Chef::Provider::Database::PostgresqlUser
   connection_info = postgresql_connection_info
@@ -83,4 +82,3 @@ database_user db_user do
   privileges [:all]
   action :grant
 end
-
