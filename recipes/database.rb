@@ -45,7 +45,7 @@ postgresql_connection_info = {
 
 case node['ganeti_webmgr']['database']['engine'].split('.').last
 when 'mysql'
-  include_recipe 'mysql::client'
+  include_recipe 'osl-mysql::client'
   include_recipe 'database::mysql'
   db_provider = Chef::Provider::Database::Mysql
   db_user_provider = Chef::Provider::Database::MysqlUser
