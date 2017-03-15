@@ -23,7 +23,7 @@
 # Make sure our settings in Django are set correctly to mysql
 node.override['ganeti_webmgr']['database']['engine'] = 'django.db.backends.mysql'
 # install mysql server
-include_recipe 'mysql::server'
+include_recipe 'osl-mysql::server'
 
 directory node['mysql']['data_dir'] do
   mode '0755'
