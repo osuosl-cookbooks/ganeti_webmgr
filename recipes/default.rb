@@ -29,8 +29,8 @@ directory node['ganeti_webmgr']['path'] do
 end
 
 no_clone = node.chef_environment == 'vagrant' &&
-          ::File.directory?(::File.join(node['ganeti_webmgr']['path'],
-          '.git'))
+           ::File.directory?(::File.join(node['ganeti_webmgr']['path'],
+                                         '.git'))
 
 # clone the repo so we can run setup.sh to install
 git node['ganeti_webmgr']['path'] do
@@ -75,7 +75,7 @@ install_dir = node['ganeti_webmgr']['install_dir']
 
 # use setup.sh to install GWM
 execute 'install_gwm' do
-  command './scripts/setup.sh -D #{db_driver} -d #{install_dir}'
+  command './scripts/setup.sh -D ' + db_driver + ' -d ' + install_dir
   cwd node['ganeti_webmgr']['path']
   environment env
   user node['ganeti_webmgr']['user']
