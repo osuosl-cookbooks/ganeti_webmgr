@@ -29,8 +29,8 @@ directory node['ganeti_webmgr']['path'] do
 end
 
 no_clone = node.chef_environment == 'vagrant' &&
-          ::File.directory?(::File.join(node['ganeti_webmgr']['path'],
-          '.git'))
+           ::File.directory?(::File.join(node['ganeti_webmgr']['path'],
+                                         '.git'))
 
 # clone the repo so we can run setup.sh to install
 git node['ganeti_webmgr']['path'] do
