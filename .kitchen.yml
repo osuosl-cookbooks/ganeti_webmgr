@@ -3,7 +3,7 @@ provisioner:
   name: chef_solo
   environments_path: environments
   data_bags_path: "test/integration/data_bags"
-  encrypted_data_bag_secret_key_path: "encrypted_data_bag_secret"
+  encrypted_data_bag_secret_key_path: "test/integration/encrypted_data_bag_secret"
 
 suites:
   - name: default
