@@ -17,7 +17,7 @@ suites:
     attributes:
       ganeti_webmgr:
         database:
-          engine: sqlite3
+          engine: django.db.backends.sqlite3
           name: /home/vagrant/gwm.db
         vncauthproxy:
           port: "8888"

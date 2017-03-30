@@ -28,7 +28,7 @@ default['ganeti_webmgr']['site_domain'] = node['fqdn']
 
 default['ganeti_webmgr']['haystack_whoosh_path'] = '/opt/ganeti_webmgr/whoosh_index'
 
-default['ganeti_webmgr']['database']['engine'] = nil
+default['ganeti_webmgr']['database']['engine'] = 'sqlite3'
 # Load the DB Credentials using the databag as defaults.
 default['ganeti_webmgr']['database']['name'] = nil
 default['ganeti_webmgr']['database']['user'] = nil
