@@ -16,7 +16,8 @@ version = version[0] + '.' + version[1]
 python_version = "python#{version}"
 
 python_path = ::File.join(
-  gwm['install_dir'], 'lib', python_version, 'site-packages')
+  gwm['install_dir'], 'lib', python_version, 'site-packages'
+)
 wsgi_path = ::File.join(python_path, 'ganeti_webmgr', 'ganeti_web', 'wsgi.py')
 
 venv = gwm['install_dir']
@@ -32,11 +33,11 @@ end
 
 if gwm['https_enabled']
   template_name = 'gwm_apache_vhost_https.conf.erb'
-  if gwm['apache']['server_port'] == 80
-    server_port = 443
-  else
-    server_port = gwm['apache']['server_port']
-  end
+  server_port = if gwm['apache']['server_port'] == 80
+                  443
+                else
+                  gwm['apache']['server_port']
+                end
 else
   template_name = 'gwm_apache_vhost.conf.erb'
   server_port = gwm['apache']['server_port']
