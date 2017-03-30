@@ -28,8 +28,8 @@ directory node['ganeti_webmgr']['path'] do
   action :create
 end
 
-# no_clone = node.chef_environment == 'vagrant' &&
-# ::File.directory?(::File.join(node['ganeti_webmgr']['path'], '.git'))
+no_clone = node.chef_environment == 'vagrant' &&
+           ::File.directory?(::File.join(node['ganeti_webmgr']['path'], '.git'))
 
 # clone the repo so we can run setup.sh to install
 git node['ganeti_webmgr']['path'] do
@@ -37,7 +37,7 @@ git node['ganeti_webmgr']['path'] do
   revision node['ganeti_webmgr']['revision']
   user node['ganeti_webmgr']['owner']
   group node['ganeti_webmgr']['group']
-  # not_if { no_clone }
+  not_if { no_clone }
 end
 
 # The first value is for our custom config directory
@@ -54,27 +54,27 @@ node['ganeti_webmgr']['packages'].each do |pkg|
   end
 end
 
-# db_driver = case node['ganeti_webmgr']['database']['engine'].split('.').last
-#             when 'mysql'
-#               include_recipe 'mysql::client'
-#               'mysql'
-#             when 'psycopg2', 'postgresql_psycopg2'
-#               'postgres'
-#             when 'sqlite3'
-#               'sqlite'
-#             else
-#               log "node['ganeti_webmgr']['database']['engine'] needs to
-#                 be set!" do
-#                 level :fatal
-#               end
-#             end
+db_driver = case node['ganeti_webmgr']['database']['engine'].split('.').last
+            when 'mysql'
+              include_recipe 'mysql::client'
+              'mysql'
+            when 'psycopg2', 'postgresql_psycopg2'
+              'postgres'
+            when 'sqlite3'
+              'sqlite'
+            else
+              log "node['ganeti_webmgr']['database']['engine'] needs to
+                be set!" do
+                level :fatal
+              end
+            end
 
 # the install dir *is* the virtualenv
 install_dir = node['ganeti_webmgr']['install_dir']
 
 # use setup.sh to install GWM
 execute 'install_gwm' do
-  command './scripts/setup.sh -D #{db_driver} -d #{install_dir}'
+  command "./scripts/setup.sh -D #{db_driver} -d #{install_dir}"
   cwd node['ganeti_webmgr']['path']
   environment env
   user node['ganeti_webmgr']['user']
