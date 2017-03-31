@@ -20,6 +20,14 @@ describe 'ganeti_webmgr::default' do
       it 'converges successfully' do
         expect { chef_run }.to_not raise_error
       end
+      it do
+        expect(chef_run).to create_directory(
+          '/opt/ganeti_webmgr_src'
+        ).with(
+          owner: nil,
+          group: nil
+        )
+      end
     end
   end
 end

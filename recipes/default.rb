@@ -119,7 +119,9 @@ django_admin = ::File.join(venv_bin, 'django-admin.py')
 # syncdb using django-admin.py
 execute 'run_syncdb' do
   command "#{django_admin} syncdb --noinput"
-  environment env
+  environment('GWM_CONFIG_DIR' => node['ganeti_webmgr']['config_dir'].to_s,
+              'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings')
+
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   only_if { node['ganeti_webmgr']['migrate'] }
