@@ -58,14 +58,14 @@ describe 'ganeti_webmgr::default' do
           group: nil
         )
       end
-      it  'generates configuration file from template' do
+      it 'generates configuration file from template' do
         expect(chef_run).to create_template(
           '/opt/ganeti_webmgr/config/config.yml'
         ).with(
           source: 'config.yml.erb',
           owner: nil,
           group: nil,
-          mode: '0644',
+          mode: '0644'
         )
       end
       it 'does not run syncdb --noinput' do
