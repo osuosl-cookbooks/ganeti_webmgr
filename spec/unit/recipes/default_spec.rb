@@ -58,6 +58,41 @@ describe 'ganeti_webmgr::default' do
           group: nil
         )
       end
+      it  'generates configuration file from template' do
+        expect(chef_run).to create_template(
+          '/opt/ganeti_webmgr/config/config.yml'
+        ).with(
+          source: 'config.yml.erb',
+          owner: nil,
+          group: nil,
+          mode: '0644',
+        )
+      end
+      it 'does not run syncdb --noinput' do
+        expect(chef_run).to_not run_execute(
+          'run_syncdb'
+        )
+      end
+      it 'does not run migration' do
+        expect(chef_run).to_not run_execute(
+          'run_migration'
+        )
+      end
+      it 'logs setting up the vncauthproxy script' do
+        expect(chef_run).to write_log(
+          'Setting up vncauthproxy runit script'
+        )
+      end
+      it 'starts service vncauthproxy' do
+        expect(chef_run).to enable_runit_service(
+          'vncauthproxy'
+        )
+      end
+      it 'starts service flashpolicy' do
+        expect(chef_run).to enable_runit_service(
+          'flashpolicy'
+        )
+      end
     end
   end
 end
