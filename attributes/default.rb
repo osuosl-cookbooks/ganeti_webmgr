@@ -19,7 +19,7 @@ default['ganeti_webmgr']['install_dir'] = '/opt/ganeti_webmgr'
 default['ganeti_webmgr']['config_dir'] = '/opt/ganeti_webmgr/config'
 
 default['ganeti_webmgr']['static_root'] = '/opt/ganeti_webmgr/collected_static'
-default['ganeti_webmgr']['static_url'] = '/static'
+default['ganeti_webmgr']['static_url'] = '/static/'
 default['ganeti_webmgr']['rapi_connect_timeout'] = 60
 
 default['ganeti_webmgr']['debug'] = false

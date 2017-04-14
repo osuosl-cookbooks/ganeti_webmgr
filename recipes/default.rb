@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe 'python'
+include_recipe 'poise-python'
 include_recipe 'git'
 include_recipe 'build-essential::default'
 
@@ -29,8 +29,7 @@ directory node['ganeti_webmgr']['path'] do
 end
 
 no_clone = node.chef_environment == 'vagrant' &&
-           ::File.directory?(::File.join(node['ganeti_webmgr']['path'],
-                                         '.git'))
+           ::File.directory?(::File.join(node['ganeti_webmgr']['path'], '.git'))
 
 # clone the repo so we can run setup.sh to install
 git node['ganeti_webmgr']['path'] do
@@ -72,6 +71,14 @@ db_driver = case node['ganeti_webmgr']['database']['engine'].split('.').last
 
 # the install dir *is* the virtualenv
 install_dir = node['ganeti_webmgr']['install_dir']
+
+directory install_dir do
+  :create
+end
+
+directory node['ganeti_webmgr']['config_dir'] do
+  :create
+end
 
 # use setup.sh to install GWM
 execute 'install_gwm' do
