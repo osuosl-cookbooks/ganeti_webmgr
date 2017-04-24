@@ -139,11 +139,11 @@ execute 'run_syncdb' do
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   only_if { node['ganeti_webmgr']['migrate'] }
-  environment ({ 'PATH' => '/opt/rh/python27/root/usr/bin${PATH:+:${PATH}}' })
-  environment ({ 'LD_LIBRARY_PATH' => '/opt/rh/python27/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}' })
-  environment ({ 'MANPATH' => '/opt/rh/python27/root/usr/share/man:${MANPATH}' })
-  environment ({ 'XDG_DATA_DIRS' => '/opt/rh/python27/root/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}' })
-  environment ({ 'PKG_CONFIG_PATH' => '/opt/rh/python27/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}' })
+  environment('PATH' => '/opt/rh/python27/root/usr/bin${PATH:+:${PATH}}')
+  environment('LD_LIBRARY_PATH' => '/opt/rh/python27/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}')
+  environment('MANPATH' => '/opt/rh/python27/root/usr/share/man:${MANPATH}')
+  environment('XDG_DATA_DIRS' => '/opt/rh/python27/root/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}')
+  environment('PKG_CONFIG_PATH' => '/opt/rh/python27/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}')
 end
 
 # migrate using django-admin.py
