@@ -82,7 +82,7 @@ end
 
 # use setup.sh to install GWM
 execute 'install_gwm' do
-  command "./scripts/setup.sh -D #{db_driver} -d #{install_dir}"
+  command "scl enable python27 './scripts/setup.sh -D #{db_driver} -d #{install_dir}'"
   cwd node['ganeti_webmgr']['path']
   environment env
   user node['ganeti_webmgr']['user']
@@ -121,7 +121,11 @@ end
 python_virtualenv install_dir
 
 python_package 'Django' do
-  version '1.8'
+  version '1.4'
+  virtualenv install_dir
+end
+
+pip_requirements '/opt/ganeti_webmgr_src/requirements/production.txt' do
   virtualenv install_dir
 end
 
@@ -132,23 +136,23 @@ django_admin = ::File.join(venv_bin, 'django-admin.py')
 
 # syncdb using django-admin.py
 execute 'run_syncdb' do
-  command "#{django_admin} syncdb --noinput"
+  command "scl enable python27 '#{django_admin} syncdb --noinput'"
   environment('GWM_CONFIG_DIR' => node['ganeti_webmgr']['config_dir'].to_s,
-              'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings')
+              'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
+              #'PATH' => '/opt/rh/python27/root/usr/bin${PATH:+:${PATH}}',
+              'LD_LIBRARY_PATH' => '/opt/rh/python27/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}',
+              'MANPATH' => '/opt/rh/python27/root/usr/share/man:${MANPATH}',
+              'XDG_DATA_DIRS' => '/opt/rh/python27/root/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}',
+              'PKG_CONFIG_PATH' => '/opt/rh/python27/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}')
 
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   only_if { node['ganeti_webmgr']['migrate'] }
-  environment('PATH' => '/opt/rh/python27/root/usr/bin${PATH:+:${PATH}}')
-  environment('LD_LIBRARY_PATH' => '/opt/rh/python27/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}')
-  environment('MANPATH' => '/opt/rh/python27/root/usr/share/man:${MANPATH}')
-  environment('XDG_DATA_DIRS' => '/opt/rh/python27/root/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}')
-  environment('PKG_CONFIG_PATH' => '/opt/rh/python27/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}')
 end
 
 # migrate using django-admin.py
 execute 'run_migration' do
-  command "#{django_admin} migrate"
+  command "scl enable python27 '#{django_admin} migrate'"
   environment env
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
