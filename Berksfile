@@ -1,9 +1,8 @@
-source 'http://api.berkshelf.com'
+source 'https://supermarket.chef.io'
+
+cookbook 'osl-mysql', git: 'git@github.com:osuosl-cookbooks/osl-mysql'
+cookbook 'osl-nrpe', git: 'git@github.com:osuosl-cookbooks/osl-nrpe'
+cookbook 'osl-munin', git: 'git@github.com:osuosl-cookbooks/osl-munin'
+cookbook 'firewall', git: 'git@github.com:osuosl-cookbooks/firewall'
 
 metadata
-
-cookbook 'yum', '> 3.0.0'
-cookbook 'apt'
-cookbook 'build-essential'
-cookbook 'openssl'
-cookbook 'runit'

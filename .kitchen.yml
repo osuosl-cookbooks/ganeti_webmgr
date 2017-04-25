@@ -1,29 +1,9 @@
 ---
-driver:
-  name: vagrant
-  network:
-    - ["private_network", {ip: "33.33.33.110", adapter: 2}]
-
 provisioner:
   name: chef_solo
   environments_path: environments
   data_bags_path: "test/integration/data_bags"
-  encrypted_data_bag_secret_key_path: "encrypted_data_bag_secret"
-
-platforms:
-  - name: centos-6
-    driver_plugin: vagrant
-    driver_config:
-      box: centos-6-20140121
-      box_url: http://vagrant.osuosl.org/centos-6-20140121.box
-
-  - name: ubuntu-12.04
-    driver_plugin: vagrant
-    driver_config:
-      box: ubuntu-12.04-20140121
-      box_url: http://vagrant.osuosl.org/ubuntu-12.04-20140121.box
-    run_list:
-      - recipe[apt::default]
+  encrypted_data_bag_secret_key_path: "test/integration/encrypted_data_bag_secret"
 
 suites:
   - name: default

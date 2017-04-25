@@ -1,6 +1,7 @@
 default['ganeti_webmgr']['path'] = '/opt/ganeti_webmgr_src'
 default['ganeti_webmgr']['user'] = nil
 default['ganeti_webmgr']['group'] = nil
+default['mysql']['data_dir'] = '/usr/'
 
 default['ganeti_webmgr']['repository'] = 'https://github.com/osuosl/ganeti_webmgr'
 default['ganeti_webmgr']['revision'] = 'develop'
@@ -18,7 +19,7 @@ default['ganeti_webmgr']['install_dir'] = '/opt/ganeti_webmgr'
 default['ganeti_webmgr']['config_dir'] = '/opt/ganeti_webmgr/config'
 
 default['ganeti_webmgr']['static_root'] = '/opt/ganeti_webmgr/collected_static'
-default['ganeti_webmgr']['static_url'] = '/static'
+default['ganeti_webmgr']['static_url'] = '/static/'
 default['ganeti_webmgr']['rapi_connect_timeout'] = 60
 
 default['ganeti_webmgr']['debug'] = false
@@ -27,7 +28,7 @@ default['ganeti_webmgr']['site_domain'] = node['fqdn']
 
 default['ganeti_webmgr']['haystack_whoosh_path'] = '/opt/ganeti_webmgr/whoosh_index'
 
-default['ganeti_webmgr']['database']['engine'] = nil
+default['ganeti_webmgr']['database']['engine'] = 'sqlite3'
 # Load the DB Credentials using the databag as defaults.
 default['ganeti_webmgr']['database']['name'] = nil
 default['ganeti_webmgr']['database']['user'] = nil
