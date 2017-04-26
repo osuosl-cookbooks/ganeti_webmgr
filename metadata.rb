@@ -19,3 +19,5 @@ depends          'database', '~> 1.4.0'
 depends          'hostsfile'
 depends          'apache2'
 depends          'runit'
+
+supports         'centos', '~> 6.0'
