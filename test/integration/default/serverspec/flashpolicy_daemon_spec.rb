@@ -1,7 +1,5 @@
 require 'serverspec'
-
-include Serverspec::Helper::Exec
-include Serverspec::Helper::DetectOS
+set :backend, :exec
 
 describe 'install and start the flashpolicy daemon' do
   describe service('flashpolicy') do
