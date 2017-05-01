@@ -1,5 +1,9 @@
 # CHANGELOG for ganeti_webmgr
 
+0.5.0 (2017-05-01)
+------------------
+- Fix converging
+
 ## 0.2.2:
 
 * Allow adjusting of VNC Auth proxy settings via attributes
