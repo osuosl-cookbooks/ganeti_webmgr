@@ -15,3 +15,11 @@ suites:
       - recipe[ganeti_webmgr::bootstrap_user]
       - recipe[ganeti_webmgr::apache]
       - recipe[ganeti_webmgr::haystack]
+  - name: mysql
+    provisioner:
+      solo_rb:
+        environment: vagrant
+    run_list:
+      - recipe[ganeti_webmgr::mysql]
+      - recipe[ganeti_webmgr::bootstrap_user]
+      - recipe[ganeti_webmgr::apache]
