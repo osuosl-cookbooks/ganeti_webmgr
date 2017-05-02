@@ -27,7 +27,7 @@ default['ganeti_webmgr']['site_domain'] = node['fqdn']
 
 default['ganeti_webmgr']['haystack_whoosh_path'] = '/opt/ganeti_webmgr/whoosh_index'
 
-default['ganeti_webmgr']['database']['engine'] = 'django.db.backends.sqlite3'
+default['ganeti_webmgr']['database']['engine'] = nil
 # Load the DB Credentials using the databag as defaults.
 default['ganeti_webmgr']['database']['name'] = nil
 default['ganeti_webmgr']['database']['user'] = nil
@@ -60,6 +60,7 @@ default['ganeti_webmgr']['apache']['threads'] = 1
 
 default['ganeti_webmgr']['certificate_file'] = nil
 default['ganeti_webmgr']['certificate_key_file'] = nil
+
 # secrets
 
 default['ganeti_webmgr']['secret_key'] = nil

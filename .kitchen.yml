@@ -15,6 +15,11 @@ suites:
       - recipe[ganeti_webmgr::bootstrap_user]
       - recipe[ganeti_webmgr::apache]
       - recipe[ganeti_webmgr::haystack]
+    attributes:
+      ganeti_webmgr:
+        database:
+          engine: 'django.db.backends.sqlite3'
+
   - name: mysql
     provisioner:
       solo_rb:
