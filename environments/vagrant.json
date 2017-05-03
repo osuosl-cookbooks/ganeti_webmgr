@@ -8,7 +8,7 @@
       "allow_remote_root": true
     },
     "ganeti_webmgr": {
-      "revision": "develop",
+      "revision": "master",
       "debug": true,
       "migrate": true,
       "database": {
