@@ -1,0 +1,4 @@
+cookbook=ganeti_webmgr
+version=0.5.0
+envs=gwm
+pr_link=https://github.com/osuosl-cookbooks/ganeti_webmgr/pull/28

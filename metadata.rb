@@ -4,7 +4,7 @@ maintainer_email 'chance@osuosl.org'
 license          'All rights reserved'
 description      'Installs/Configures Ganeti Web Manager'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '0.5.0'
+version          '0.5.1'
 source_url       'https://github.com/osuosl-cookbooks/ganeti_webmgr'
 issues_url       'https://github.com/osuosl-cookbooks/ganeti_webmgr/issues'
 depends          'build-essential'

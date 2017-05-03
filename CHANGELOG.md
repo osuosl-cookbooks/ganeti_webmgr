@@ -1,5 +1,9 @@
 # CHANGELOG for ganeti_webmgr
 
+0.5.1 (2017-05-03)
+------------------
+- Fix default test suite by using sqlite3 as the database
+
 0.5.0 (2017-05-01)
 ------------------
 - Fix converging
