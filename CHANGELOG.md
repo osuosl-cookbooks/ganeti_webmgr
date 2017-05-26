@@ -1,5 +1,9 @@
 # CHANGELOG for ganeti_webmgr
 
+0.5.2 (2017-05-26)
+------------------
+- Make default email from ganeti changeable
+
 0.5.1 (2017-05-03)
 ------------------
 - Fix default test suite by using sqlite3 as the database
