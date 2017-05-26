@@ -74,3 +74,5 @@ default['ganeti_webmgr']['vncauthproxy']['port'] = '8888'
 default['ganeti_webmgr']['vncauthproxy']['ip'] = '0.0.0.0'
 
 default['ganeti_webmgr']['vncauthproxy']['flashpolicy_enabled'] = true
+
+default['ganeti_webmgr']['email_address'] = 'noreply@osuosl.org'
