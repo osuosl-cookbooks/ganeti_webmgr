@@ -1,5 +1,9 @@
 # CHANGELOG for ganeti_webmgr
 
+0.6.0 (2017-09-08)
+------------------
+- Switch to using chef_nginx
+
 0.5.2 (2017-05-26)
 ------------------
 - Make default email from ganeti changeable
