@@ -1,5 +1,9 @@
 # CHANGELOG for ganeti_webmgr
 
+0.6.1 (2018-05-23)
+------------------
+- Switch to using poise-python
+
 0.6.0 (2017-09-08)
 ------------------
 - Switch to using chef_nginx
