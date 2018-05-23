@@ -16,7 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe 'python'
+python_runtime '2' do
+  provider :system
+end
+
 include_recipe 'git'
 include_recipe 'build-essential::default'
 
