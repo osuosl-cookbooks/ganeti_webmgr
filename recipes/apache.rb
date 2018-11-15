@@ -5,7 +5,7 @@ gwm = node['ganeti_webmgr']
 
 env = {
   'GWM_CONFIG_DIR' => gwm['config_dir'].to_s,
-  'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings'
+  'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
 }
 
 python_version = node['languages']['python']['version']

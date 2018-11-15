@@ -22,7 +22,7 @@ django_admin = ::File.join(venv_bin, 'django-admin.py')
 
 env = {
   'GWM_CONFIG_DIR' => node['ganeti_webmgr']['config_dir'].to_s,
-  'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings'
+  'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
 }
 
 # Use the attributes to bootstrap users if set, otherwise use databag users

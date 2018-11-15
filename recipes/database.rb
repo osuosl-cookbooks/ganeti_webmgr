@@ -33,14 +33,14 @@ mysql_connection_info = {
   host: db_host,
   port: db_port,
   username: server_user || 'root',
-  password: server_password
+  password: server_password,
 }
 
 # postgres example not tested:
 postgresql_connection_info = {
   host: db_host,
   username: server_user || 'postgres',
-  password: server_password
+  password: server_password,
 }
 
 case node['ganeti_webmgr']['database']['engine'].split('.').last
