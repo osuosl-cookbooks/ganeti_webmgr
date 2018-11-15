@@ -18,7 +18,7 @@
 # Recipe to do database agnostic boostrapping
 # Creates a database, and a database user
 
-passwords = Chef::EncryptedDataBagItem.load('ganeti_webmgr', 'passwords')
+passwords = data_bag_item('ganeti_webmgr', 'passwords')
 
 db_host = node['ganeti_webmgr']['database']['host']
 db_port = node['ganeti_webmgr']['database']['port']

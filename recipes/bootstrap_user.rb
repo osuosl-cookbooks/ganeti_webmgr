@@ -28,7 +28,7 @@ env = {
 # Use the attributes to bootstrap users if set, otherwise use databag users
 users = node['ganeti_webmgr']['superusers']
 unless users.any?
-  passwords = Chef::EncryptedDataBagItem.load('ganeti_webmgr', 'passwords')
+  passwords = data_bag_item('ganeti_webmgr', 'passwords')
   users = passwords['superusers'] || []
 end
 
