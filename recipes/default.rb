@@ -59,7 +59,6 @@ end
 
 db_driver = case node['ganeti_webmgr']['database']['engine'].split('.').last
             when 'mysql'
-              include_recipe 'mysql::client'
               'mysql'
             when 'psycopg2', 'postgresql_psycopg2'
               'postgres'
