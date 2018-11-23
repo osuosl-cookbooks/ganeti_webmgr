@@ -43,8 +43,6 @@ default['ganeti_webmgr']['superusers'] = []
 default['ganeti_webmgr']['host'] = node['fqdn']
 default['ganeti_webmgr']['port'] = 8000
 
-default['ganeti_webmgr']['hostsfile'] = {}
-
 default['ganeti_webmgr']['vnc_proxy'] = "#{node['fqdn']}:8888"
 
 default['chef_nginx']['default_site_enabled'] = false
