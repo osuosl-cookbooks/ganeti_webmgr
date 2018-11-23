@@ -37,9 +37,7 @@ users.each do |user|
   email = user['email']
   password = user['password']
 
-  log "Creating django superuser #{username}"
-
-  execute 'bootstrap_superuser' do
+  python_execute 'bootstrap_superuser' do
     command <<-EOS
     #{django_admin} createsuperuser --noinput --username=#{username} --email #{email}
     #{python} -c \"from django.contrib.auth.models import User;u=User.objects.get(username='#{username}');u.set_password('#{password}');u.save();\"

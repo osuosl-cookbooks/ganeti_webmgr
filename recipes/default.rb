@@ -16,12 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-python_runtime '2' do
-  provider :system
-end
+python_runtime '2.7'
 
 include_recipe 'git'
 include_recipe 'build-essential::default'
+
+package node['ganeti_webmgr']['packages']
 
 # Make sure the directory for GWM exists before we try to clone to it
 directory node['ganeti_webmgr']['path'] do
@@ -34,6 +34,26 @@ end
 no_clone = node.chef_environment == 'vagrant' &&
            ::File.directory?(::File.join(node['ganeti_webmgr']['path'], '.git'))
 
+# the install dir *is* the virtualenv
+install_dir = node['ganeti_webmgr']['install_dir']
+directory install_dir
+
+python_virtualenv install_dir do
+  pip_version '18.0'
+end
+
+db_driver =
+  case node['ganeti_webmgr']['database']['engine'].split('.').last
+  when 'mysql'
+    'MySQL-python'
+  when 'psycopg2', 'postgresql_psycopg2'
+    'psycopg2'
+  else
+    []
+  end
+
+python_package db_driver
+
 # clone the repo so we can run setup.sh to install
 git node['ganeti_webmgr']['path'] do
   repository node['ganeti_webmgr']['repository']
@@ -41,6 +61,7 @@ git node['ganeti_webmgr']['path'] do
   user node['ganeti_webmgr']['owner']
   group node['ganeti_webmgr']['group']
   not_if { no_clone }
+  notifies :run, 'python_execute[install ganeti_webmgr]', :immediately
 end
 
 # The first value is for our custom config directory
@@ -50,39 +71,10 @@ env = {
   'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
 }
 
-log 'Installing additional system packages for Ganeti Web Manager'
-node['ganeti_webmgr']['packages'].each do |pkg|
-  package pkg do
-    action :install
-  end
-end
-
-db_driver = case node['ganeti_webmgr']['database']['engine'].split('.').last
-            when 'mysql'
-              'mysql'
-            when 'psycopg2', 'postgresql_psycopg2'
-              'postgres'
-            when 'sqlite3'
-              'sqlite'
-            else
-              log "node['ganeti_webmgr']['database']['engine'] needs to
-                be set!" do
-                level :fatal
-              end
-            end
-
-# the install dir *is* the virtualenv
-install_dir = node['ganeti_webmgr']['install_dir']
-
-# use setup.sh to install GWM
-execute 'install_gwm' do
-  command "./scripts/setup.sh -D #{db_driver} -d #{install_dir}"
+python_execute 'install ganeti_webmgr' do
+  action :nothing
+  command '-m pip install .'
   cwd node['ganeti_webmgr']['path']
-  environment env
-  user node['ganeti_webmgr']['user']
-  group node['ganeti_webmgr']['group']
-  creates node['ganeti_webmgr']['install_dir']
-  action :run
 end
 
 passwords = data_bag_item(
@@ -95,6 +87,9 @@ secret_key = node['ganeti_webmgr']['secret_key'] || passwords['secret_key']
 web_mgr_api_key = node['ganeti_webmgr']['web_mgr_api_key'] || passwords['web_mgr_api_key']
 
 config_file = ::File.join(node['ganeti_webmgr']['config_dir'], 'config.yml')
+
+directory node['ganeti_webmgr']['config_dir']
+
 template config_file do
   source 'config.yml.erb'
   owner node['ganeti_webmgr']['user']
@@ -109,16 +104,13 @@ template config_file do
   )
 end
 
-# these would work better as resources or library files,
-# but this works fine for now
-
 # get the path to the files we need to run commands
 venv = install_dir
 venv_bin = ::File.join(venv, 'bin')
 django_admin = ::File.join(venv_bin, 'django-admin.py')
 
 # syncdb using django-admin.py
-execute 'run_syncdb' do
+python_execute 'run_syncdb' do
   command "#{django_admin} syncdb --noinput"
   environment env
   user node['ganeti_webmgr']['user']
@@ -127,7 +119,7 @@ execute 'run_syncdb' do
 end
 
 # migrate using django-admin.py
-execute 'run_migration' do
+python_execute 'run_migration' do
   command "#{django_admin} migrate"
   environment env
   user node['ganeti_webmgr']['user']
@@ -136,8 +128,6 @@ execute 'run_migration' do
 end
 
 # run vncauthproxy setup
-log 'Setting up vncauthproxy runit script'
-
 include_recipe 'runit'
 runit_service 'vncauthproxy' do
   options(

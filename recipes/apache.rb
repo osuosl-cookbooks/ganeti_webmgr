@@ -24,7 +24,7 @@ venv = gwm['install_dir']
 venv_bin = ::File.join(venv, 'bin')
 django_admin = ::File.join(venv_bin, 'django-admin.py')
 
-execute 'collect_static' do
+python_execute 'collect_static' do
   command "#{django_admin} collectstatic --noinput"
   environment env
   user node['ganeti_webmgr']['user']
