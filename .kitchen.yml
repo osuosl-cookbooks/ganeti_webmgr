@@ -1,15 +1,24 @@
 ---
 provisioner:
   name: chef_solo
-  environments_path: environments
   data_bags_path: "test/integration/data_bags"
   encrypted_data_bag_secret_key_path: "encrypted_data_bag_secret"
+  attributes:
+    ganeti_webmgr:
+      revision: master
+      debug: true
+      migrate: true
+      database:
+        name: ganeti_webmgr
+        user: ganeti_webmgr
+        password: ganeti_webmgr
+        host: localhost
+      apache:
+        server_aliases:
+          - localhost
 
 suites:
   - name: default
-    provisioner:
-      solo_rb:
-        environment: vagrant
     run_list:
       - recipe[ganeti_webmgr::default]
       - recipe[ganeti_webmgr::bootstrap_user]
@@ -21,9 +30,6 @@ suites:
           engine: 'django.db.backends.sqlite3'
 
   - name: mysql
-    provisioner:
-      solo_rb:
-        environment: vagrant
     run_list:
       - recipe[gwm_test]
       - recipe[ganeti_webmgr::default]
