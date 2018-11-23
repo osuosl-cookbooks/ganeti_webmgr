@@ -31,13 +31,7 @@ end
 mysql_database_user db_user do
   connection connection_info
   database_name node['ganeti_webmgr']['database']['name']
-  password db_pass
-end
-
-# Give our user permissions to the DB
-mysql_database_user db_user do
-  connection connection_info
-  database_name node['ganeti_webmgr']['database']['name']
   privileges [:all]
-  action :grant
+  password db_pass
+  action [:create, :grant]
 end
