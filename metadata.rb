@@ -15,7 +15,7 @@ depends          'chef_nginx'
 depends          'openssl'
 depends          'sqlite'
 depends          'hostsfile'
-depends          'apache2'
+depends          'apache2', '~> 4.0.0'
 depends          'runit'
 
 supports         'centos', '~> 6.0'

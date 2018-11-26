@@ -16,16 +16,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-python_runtime '2.7'
+python_runtime '2' do
+  provider :system
+end
 
 include_recipe 'git'
 include_recipe 'build-essential::default'
 
 package node['ganeti_webmgr']['packages']
 
+# the install dir *is* the virtualenv
+install_dir = node['ganeti_webmgr']['install_dir']
+
+# Create gwm user/group
+group node['ganeti_webmgr']['group'] do
+  system true
+end
+
+user node['ganeti_webmgr']['user'] do
+  home install_dir
+  group node['ganeti_webmgr']['group']
+  system true
+  action [:create, :lock]
+end
+
 # Make sure the directory for GWM exists before we try to clone to it
 directory node['ganeti_webmgr']['path'] do
-  owner node['ganeti_webmgr']['owner']
+  owner node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   recursive true
   action :create
@@ -34,12 +51,16 @@ end
 no_clone = node.chef_environment == 'vagrant' &&
            ::File.directory?(::File.join(node['ganeti_webmgr']['path'], '.git'))
 
-# the install dir *is* the virtualenv
-install_dir = node['ganeti_webmgr']['install_dir']
-directory install_dir
+directory install_dir do
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+  recursive true
+end
 
 python_virtualenv install_dir do
-  pip_version '18.0'
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+  pip_version '9.0.3'
 end
 
 db_driver =
@@ -52,16 +73,27 @@ db_driver =
     []
   end
 
-python_package db_driver
+# Install db driver (if needed)
+python_package db_driver do
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+end
 
-# clone the repo so we can run setup.sh to install
+# We need this specific version to work with python2.6
+python_package 'pycparser' do
+  version '2.14'
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+end
+
+# clone the repo so we can install
 git node['ganeti_webmgr']['path'] do
   repository node['ganeti_webmgr']['repository']
   revision node['ganeti_webmgr']['revision']
-  user node['ganeti_webmgr']['owner']
+  user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   not_if { no_clone }
-  notifies :run, 'python_execute[install ganeti_webmgr]', :immediately
+  notifies :run, 'execute[install ganeti_webmgr]', :immediately
 end
 
 # The first value is for our custom config directory
@@ -71,10 +103,14 @@ env = {
   'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
 }
 
-python_execute 'install ganeti_webmgr' do
+# Install GWM deps using pip directly
+# NOTE: this does not work with python_execute due to python2.6 issues
+execute 'install ganeti_webmgr' do
   action :nothing
-  command '-m pip install .'
+  command "/opt/ganeti_webmgr/bin/pip install --cache-dir #{install_dir}/.cache/pip ."
   cwd node['ganeti_webmgr']['path']
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
 end
 
 passwords = data_bag_item(
@@ -88,7 +124,11 @@ web_mgr_api_key = node['ganeti_webmgr']['web_mgr_api_key'] || passwords['web_mgr
 
 config_file = ::File.join(node['ganeti_webmgr']['config_dir'], 'config.yml')
 
-directory node['ganeti_webmgr']['config_dir']
+directory node['ganeti_webmgr']['config_dir'] do
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+  recursive true
+end
 
 template config_file do
   source 'config.yml.erb'

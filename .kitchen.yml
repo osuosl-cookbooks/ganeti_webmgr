@@ -28,6 +28,7 @@ suites:
       ganeti_webmgr:
         database:
           engine: 'django.db.backends.sqlite3'
+          name: /opt/ganeti_webmgr/ganeti_webmgr
 
   - name: mysql
     run_list:

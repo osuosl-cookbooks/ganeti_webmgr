@@ -1,3 +1,5 @@
+WSGISocketPrefix run/wsgi
+
 <VirtualHost *:<%= @params[:server_port] || node['apache']['listen_ports'].first %>>
 
     ServerName <%= @params[:server_name] %>

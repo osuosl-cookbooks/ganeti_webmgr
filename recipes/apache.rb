@@ -8,21 +8,9 @@ env = {
   'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
 }
 
-python_version = node['languages']['python']['version']
-# virtualenvs only have the major version
-# (ie: 2.6, not 2.6.6)
-version = python_version.split('.')
-version = version[0] + '.' + version[1]
-python_version = "python#{version}"
-
-python_path = ::File.join(
-  gwm['install_dir'], 'lib', python_version, 'site-packages'
-)
+python_path = ::File.join(gwm['install_dir'], 'lib', 'python2.6', 'site-packages')
 wsgi_path = ::File.join(python_path, 'ganeti_webmgr', 'ganeti_web', 'wsgi.py')
-
-venv = gwm['install_dir']
-venv_bin = ::File.join(venv, 'bin')
-django_admin = ::File.join(venv_bin, 'django-admin.py')
+django_admin = ::File.join(gwm['install_dir'], 'bin', 'django-admin.py')
 
 python_execute 'collect_static' do
   command "#{django_admin} collectstatic --noinput"
@@ -55,4 +43,5 @@ web_app gwm['application_name'] do
   wsgi_process_group 'ganeti_webmgr'
   wsgi_path wsgi_path
   python_path python_path
+  notifies :reload, 'service[apache2]'
 end

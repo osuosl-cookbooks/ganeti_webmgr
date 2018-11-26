@@ -1,6 +1,6 @@
 default['ganeti_webmgr']['path'] = '/opt/ganeti_webmgr_src'
-default['ganeti_webmgr']['user'] = nil
-default['ganeti_webmgr']['group'] = nil
+default['ganeti_webmgr']['user'] = 'ganeti_webmgr'
+default['ganeti_webmgr']['group'] = 'ganeti_webmgr'
 
 default['ganeti_webmgr']['repository'] = 'https://github.com/osuosl/ganeti_webmgr'
 default['ganeti_webmgr']['revision'] = 'develop'
