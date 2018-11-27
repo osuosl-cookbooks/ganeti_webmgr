@@ -62,6 +62,7 @@ default['ganeti_webmgr']['apache']['threads'] = 1
 
 default['ganeti_webmgr']['certificate_file'] = nil
 default['ganeti_webmgr']['certificate_key_file'] = nil
+default['ganeti_webmgr']['certificate_chain_file'] = nil
 
 # secrets
 
