@@ -48,9 +48,6 @@ directory node['ganeti_webmgr']['path'] do
   action :create
 end
 
-no_clone = node.chef_environment == 'vagrant' &&
-           ::File.directory?(::File.join(node['ganeti_webmgr']['path'], '.git'))
-
 directory install_dir do
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
@@ -92,7 +89,6 @@ git node['ganeti_webmgr']['path'] do
   revision node['ganeti_webmgr']['revision']
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
-  not_if { no_clone }
   notifies :run, 'execute[install ganeti_webmgr]', :immediately
 end
 
