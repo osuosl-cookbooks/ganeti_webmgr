@@ -24,6 +24,6 @@ gwm_command =
   'http://localhost/accounts/login/ 2>&1'
 
 describe command(gwm_command) do
-	its('stdout') { should match(/You do not have access to any virtual machines/) }
-	its('stdout') { should match(/You are logged in as.*\n.*admin/) }
+  its('stdout') { should match(/You do not have access to any virtual machines/) }
+  its('stdout') { should match(/You are logged in as.*\n.*admin/) }
 end
