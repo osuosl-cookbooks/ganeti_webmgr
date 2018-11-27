@@ -206,6 +206,7 @@ end
 
 include_recipe 'apache2::default'
 include_recipe 'apache2::mod_wsgi'
+include_recipe 'apache2::mod_ssl' if node['ganeti_webmgr']['https_enabled']
 
 python_execute 'collect_static' do
   command "#{django_admin} collectstatic --noinput"
@@ -214,24 +215,11 @@ python_execute 'collect_static' do
   group node['ganeti_webmgr']['group']
 end
 
-if node['ganeti_webmgr']['https_enabled']
-  template_name = 'gwm_apache_vhost_https.conf.erb'
-  server_port = if node['ganeti_webmgr']['apache']['server_port'] == 80
-                  443
-                else
-                  node['ganeti_webmgr']['apache']['server_port']
-                end
-else
-  template_name = 'gwm_apache_vhost.conf.erb'
-  server_port = node['ganeti_webmgr']['apache']['server_port']
-end
-
 web_app node['ganeti_webmgr']['application_name'] do
-  template template_name
+  template 'gwm_apache_vhost.conf.erb'
   server_aliases node['ganeti_webmgr']['apache']['server_aliases']
-  cookbook 'ganeti_webmgr'
   server_name node['ganeti_webmgr']['apache']['server_name']
-  server_port server_port
+  server_port node['ganeti_webmgr']['apache']['server_port']
   app node['ganeti_webmgr']
   processes node['ganeti_webmgr']['apache']['processes']
   threads node['ganeti_webmgr']['apache']['threads']

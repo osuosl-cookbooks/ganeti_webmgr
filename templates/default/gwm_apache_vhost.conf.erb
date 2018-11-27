@@ -1,9 +1,43 @@
 WSGISocketPrefix run/wsgi
 
-<VirtualHost *:<%= @params[:server_port] || node['apache']['listen_ports'].first %>>
+<VirtualHost *:<%= @params[:server_port] %>>
 
     ServerName <%= @params[:server_name] %>
     ServerAlias <% @params[:server_aliases].each do |a| %><%= a %> <% end %>
+
+    <% if node['ganeti_webmgr']['https_enabled'] -%>
+    RewriteEngine On
+    Redirect / https://<%= @params[:server_name] %>/
+    <% else -%>
+    WSGIDaemonProcess <%= @params[:wsgi_process_group] %> processes=<%= @params[:processes] %> threads=<%= @params[:threads] %> user=<%= node['ganeti_webmgr']['user'] %> group=<%= node['ganeti_webmgr']['group'] %> python-path=<%= @params[:python_path] %>
+    WSGIProcessGroup <%= @params[:wsgi_process_group] %>
+    WSGIScriptAlias / <%= @params[:wsgi_path] %>
+
+    Alias <%= @params[:app][:static_url] %> <%= @params[:app][:static_root] %>
+
+    <Directory <%= @params[:app][:static_root] %>>
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+    <Directory <%= @params[:app][:install_dir] %>>
+        <Files wsgi.py>
+            Order allow,deny
+            Allow from all
+        </Files>
+    </Directory>
+    <% end -%>
+
+</VirtualHost>
+<% if node['ganeti_webmgr']['https_enabled'] -%>
+
+<VirtualHost *:443>
+
+    ServerName <%= @params[:server_name] %>
+    ServerAlias <% @params[:server_aliases].each do |a| %><%= a %> <% end %>
+    SSLEngine On
+    SSLCertificateFile "<%= @params[:app][:certificate_file] %>"
+    SSLCertificateKeyFile "<%= @params[:app][:certificate_key_file] %>"
 
     WSGIDaemonProcess <%= @params[:wsgi_process_group] %> processes=<%= @params[:processes] %> threads=<%= @params[:threads] %> user=<%= node['ganeti_webmgr']['user'] %> group=<%= node['ganeti_webmgr']['group'] %> python-path=<%= @params[:python_path] %>
     WSGIProcessGroup <%= @params[:wsgi_process_group] %>
@@ -24,3 +58,4 @@ WSGISocketPrefix run/wsgi
     </Directory>
 
 </VirtualHost>
+<% end -%>

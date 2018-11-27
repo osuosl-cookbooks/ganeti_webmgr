@@ -53,7 +53,7 @@ default['chef_nginx']['default_site_enabled'] = false
 
 default['ganeti_webmgr']['application_name'] = 'ganeti_webmgr'
 default['ganeti_webmgr']['apache']['server_port'] = 80
-default['ganeti_webmgr']['apache']['server_name'] = node['hostname']
+default['ganeti_webmgr']['apache']['server_name'] = node['ipaddress']
 default['ganeti_webmgr']['apache']['server_aliases'] = [node['fqdn']]
 default['ganeti_webmgr']['https_enabled'] = false
 

@@ -1,6 +1,3 @@
-# Make sure our settings in Django are set correctly to mysql
-node.override['ganeti_webmgr']['database']['engine'] = 'django.db.backends.mysql'
-
 passwords = data_bag_item('ganeti_webmgr', 'passwords')
 db_host = node['ganeti_webmgr']['database']['host']
 db_port = node['ganeti_webmgr']['database']['port']
@@ -35,3 +32,5 @@ mysql_database_user db_user do
   password db_pass
   action [:create, :grant]
 end
+
+include_recipe 'certificate::wildcard'

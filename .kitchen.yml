@@ -2,7 +2,7 @@
 provisioner:
   name: chef_solo
   data_bags_path: "test/integration/data_bags"
-  encrypted_data_bag_secret_key_path: "encrypted_data_bag_secret"
+  encrypted_data_bag_secret_key_path: "test/integration/encrypted_data_bag_secret"
   attributes:
     ganeti_webmgr:
       revision: master
@@ -31,3 +31,10 @@ suites:
     run_list:
       - recipe[gwm_test]
       - recipe[ganeti_webmgr::default]
+    attributes:
+      ganeti_webmgr:
+        database:
+          engine: 'django.db.backends.mysql'
+        https_enabled: true
+        certificate_key_file: /etc/pki/tls/private/wildcard.key
+        certificate_file: /etc/pki/tls/certs/wildcard.pem
