@@ -1,0 +1,1 @@
+../../default/inspec/email_spec.rb

@@ -1,6 +1,4 @@
-require 'serverspec'
-
 describe file('/opt/ganeti_webmgr/config/config.yml') do
   it { should exist }
-  it { should contain 'noreply@osuosl.org' }
+  its('content') { should match(/^DEFAULT_FROM_EMAIL: noreply@osuosl.org$/) }
 end

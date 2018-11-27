@@ -1,0 +1,1 @@
+../../default/inspec/flashpolicy_daemon_spec.rb
