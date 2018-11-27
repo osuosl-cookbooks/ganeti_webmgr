@@ -18,6 +18,7 @@ end
 
 shared_context 'common' do
   before do
+    stub_command('/usr/sbin/httpd -t')
     stub_data_bag_item('ganeti_webmgr', 'passwords')
       .and_return(
         db_password: 'db_password',
