@@ -136,7 +136,10 @@ end
 # get the path to the files we need to run commands
 venv = install_dir
 venv_bin = ::File.join(venv, 'bin')
+python = ::File.join(venv_bin, 'python')
 django_admin = ::File.join(venv_bin, 'django-admin.py')
+python_path = ::File.join(node['ganeti_webmgr']['install_dir'], 'lib', 'python2.6', 'site-packages')
+wsgi_path = ::File.join(python_path, 'ganeti_webmgr', 'ganeti_web', 'wsgi.py')
 
 # syncdb using django-admin.py
 python_execute 'run_syncdb' do
@@ -171,4 +174,76 @@ runit_service 'flashpolicy' do
     'install_dir' => node['ganeti_webmgr']['install_dir']
   )
   only_if { node['ganeti_webmgr']['vncauthproxy']['flashpolicy_enabled'] }
+end
+
+# Use the attributes to bootstrap users if set, otherwise use databag users
+users = node['ganeti_webmgr']['superusers']
+unless users.any?
+  passwords = data_bag_item('ganeti_webmgr', 'passwords')
+  users = passwords['superusers'] || []
+end
+
+users.each do |user|
+  username = user['username']
+  email = user['email']
+  password = user['password']
+
+  python_execute 'bootstrap_superuser' do
+    command <<-EOS
+    #{django_admin} createsuperuser --noinput --username=#{username} --email #{email}
+    #{python} -c \"from django.contrib.auth.models import User;u=User.objects.get(username='#{username}');u.set_password('#{password}');u.save();\"
+    EOS
+    user node['ganeti_webmgr']['user']
+    group node['ganeti_webmgr']['group']
+    environment node['ganeti_webmgr']['env']
+  end
+end
+
+include_recipe 'apache2::default'
+include_recipe 'apache2::mod_wsgi'
+
+python_execute 'collect_static' do
+  command "#{django_admin} collectstatic --noinput"
+  environment node['ganeti_webmgr']['env']
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+end
+
+if node['ganeti_webmgr']['https_enabled']
+  template_name = 'gwm_apache_vhost_https.conf.erb'
+  server_port = if node['ganeti_webmgr']['apache']['server_port'] == 80
+                  443
+                else
+                  node['ganeti_webmgr']['apache']['server_port']
+                end
+else
+  template_name = 'gwm_apache_vhost.conf.erb'
+  server_port = node['ganeti_webmgr']['apache']['server_port']
+end
+
+web_app node['ganeti_webmgr']['application_name'] do
+  template template_name
+  server_aliases node['ganeti_webmgr']['apache']['server_aliases']
+  cookbook 'ganeti_webmgr'
+  server_name node['ganeti_webmgr']['apache']['server_name']
+  server_port server_port
+  app node['ganeti_webmgr']
+  processes node['ganeti_webmgr']['apache']['processes']
+  threads node['ganeti_webmgr']['apache']['threads']
+  wsgi_process_group 'ganeti_webmgr'
+  wsgi_path wsgi_path
+  python_path python_path
+  notifies :reload, 'service[apache2]'
+end
+
+directory node['ganeti_webmgr']['haystack_whoosh_path'] do
+  owner node['apache']['user']
+  group node['apache']['group']
+end
+
+python_execute 'update haystack whoosh index' do
+  command "#{django_admin} update_index"
+  environment node['ganeti_webmgr']['env']
+  user node['apache']['user']
+  group node['apache']['group']
 end
