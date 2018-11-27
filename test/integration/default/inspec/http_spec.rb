@@ -9,7 +9,7 @@ end
 
 describe http('http://localhost/accounts/login', enable_remote_worker: true) do
   its('status') { should eq 200 }
-  its('body') { should contain 'About Ganeti Web Manager' }
+  its('body') { should match(/About Ganeti Web Manager/) }
 end
 
 # Simulate logging into GWM using curl
