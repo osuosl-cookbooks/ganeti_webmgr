@@ -182,7 +182,14 @@ runit_service 'flashpolicy' do
 end
 
 # Use the attributes to bootstrap users if set, otherwise use databag users
-users = node['ganeti_webmgr']['superusers'].empty? ? passwords['superusers'] : node['ganeti_webmgr']['superusers']
+users =
+  if node['ganeti_webmgr']['superusers'].empty? && passwords['superusers'].nil?
+    []
+  elsif node['ganeti_webmgr']['superusers'].empty?
+    passwords['superusers']
+  else
+    node['ganeti_webmgr']['superusers']
+  end
 
 users.each do |user|
   username = user['username']
