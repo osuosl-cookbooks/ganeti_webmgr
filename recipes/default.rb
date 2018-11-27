@@ -182,11 +182,7 @@ runit_service 'flashpolicy' do
 end
 
 # Use the attributes to bootstrap users if set, otherwise use databag users
-users = node['ganeti_webmgr']['superusers']
-unless users.any?
-  passwords = data_bag_item('ganeti_webmgr', 'passwords')
-  users = passwords['superusers'] || []
-end
+users = node['ganeti_webmgr']['superusers'].empty? ? passwords['superusers'] : node['ganeti_webmgr']['superusers']
 
 users.each do |user|
   username = user['username']
@@ -198,6 +194,7 @@ users.each do |user|
     #{django_admin} createsuperuser --noinput --username=#{username} --email #{email}
     #{python} -c \"from django.contrib.auth.models import User;u=User.objects.get(username='#{username}');u.set_password('#{password}');u.save();\"
     EOS
+    sensitive true
     user node['ganeti_webmgr']['user']
     group node['ganeti_webmgr']['group']
     environment node['ganeti_webmgr']['env']

@@ -28,6 +28,11 @@ suites:
         database:
           engine: 'django.db.backends.sqlite3'
           name: /opt/ganeti_webmgr/ganeti_webmgr
+        superusers:
+          -
+            username: admin
+            password: admin
+            email: foo@example.org
 
   - name: mysql
     run_list:

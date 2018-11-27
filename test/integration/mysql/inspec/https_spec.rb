@@ -20,3 +20,19 @@ describe http('https://localhost/accounts/login', enable_remote_worker: true, ss
   its('status') { should eq 200 }
   its('body') { should contain 'About Ganeti Web Manager' }
 end
+
+# Simulate logging into GWM using curl
+gwm_command =
+  # 1. Get initial cookie for curl
+  # 2. Grab CSRF token
+  # 3. Try logging into the site with token
+  'curl -so /dev/null -k -c c.txt -b c.txt https://localhost/accounts/login/ && ' \
+  'token=$(grep csrftoken c.txt | cut -f7) && ' \
+  'curl -H \'Referer: https://localhost/accounts/login/\' -k -c c.txt -b c.txt -d ' \
+  '"csrfmiddlewaretoken=${token}&username=root&password=root&next=%2F" -v -L ' \
+  'https://localhost/accounts/login/ 2>&1'
+
+describe command(gwm_command) do
+  its('stdout') { should match(/You do not have access to any virtual machines/) }
+  its('stdout') { should match(/You are logged in as.*\n.*root/) }
+end
