@@ -10,7 +10,7 @@ WSGISocketPrefix run/wsgi
     SSLCertificateFile "<%= @params[:app][:certificate_file] %>"
     SSLCertificateKeyFile "<%= @params[:app][:certificate_key_file] %>"
 
-    WSGIDaemonProcess <%= @params[:wsgi_process_group] %> processes=<%= @params[:processes] %> threads=<%= @params[:threads] %> python-path=<%= @params[:python_path] %>
+    WSGIDaemonProcess <%= @params[:wsgi_process_group] %> processes=<%= @params[:processes] %> threads=<%= @params[:threads] %> user=<%= node['ganeti_webmgr']['user'] %> group=<%= node['ganeti_webmgr']['group'] python-path=<%= @params[:python_path] %>
     WSGIProcessGroup <%= @params[:wsgi_process_group] %>
     WSGIScriptAlias / <%= @params[:wsgi_path] %>
 

@@ -22,6 +22,7 @@ end
 
 include_recipe 'git'
 include_recipe 'build-essential::default'
+include_recipe 'selinux_policy::install'
 
 package node['ganeti_webmgr']['packages']
 
@@ -38,6 +39,10 @@ user node['ganeti_webmgr']['user'] do
   group node['ganeti_webmgr']['group']
   system true
   action [:create, :lock]
+end
+
+selinux_policy_fcontext "#{install_dir}(/.*)?" do
+  secontext 'httpd_sys_rw_content_t'
 end
 
 # Make sure the directory for GWM exists before we try to clone to it
