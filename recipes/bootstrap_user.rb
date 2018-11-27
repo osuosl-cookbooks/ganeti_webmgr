@@ -20,11 +20,6 @@ venv_bin = ::File.join(venv, 'bin')
 python = ::File.join(venv_bin, 'python')
 django_admin = ::File.join(venv_bin, 'django-admin.py')
 
-env = {
-  'GWM_CONFIG_DIR' => node['ganeti_webmgr']['config_dir'].to_s,
-  'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
-}
-
 # Use the attributes to bootstrap users if set, otherwise use databag users
 users = node['ganeti_webmgr']['superusers']
 unless users.any?
@@ -44,6 +39,6 @@ users.each do |user|
     EOS
     user node['ganeti_webmgr']['user']
     group node['ganeti_webmgr']['group']
-    environment env
+    environment node['ganeti_webmgr']['env']
   end
 end

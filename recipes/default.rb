@@ -92,13 +92,6 @@ git node['ganeti_webmgr']['path'] do
   notifies :run, 'execute[install ganeti_webmgr]', :immediately
 end
 
-# The first value is for our custom config directory
-# the second is for django-admin.py
-env = {
-  'GWM_CONFIG_DIR' => node['ganeti_webmgr']['config_dir'].to_s,
-  'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
-}
-
 # Install GWM deps using pip directly
 # NOTE: this does not work with python_execute due to python2.6 issues
 execute 'install ganeti_webmgr' do
@@ -148,7 +141,7 @@ django_admin = ::File.join(venv_bin, 'django-admin.py')
 # syncdb using django-admin.py
 python_execute 'run_syncdb' do
   command "#{django_admin} syncdb --noinput"
-  environment env
+  environment node['ganeti_webmgr']['env']
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   only_if { node['ganeti_webmgr']['migrate'] }
@@ -157,7 +150,7 @@ end
 # migrate using django-admin.py
 python_execute 'run_migration' do
   command "#{django_admin} migrate"
-  environment env
+  environment node['ganeti_webmgr']['env']
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   only_if { node['ganeti_webmgr']['migrate'] }

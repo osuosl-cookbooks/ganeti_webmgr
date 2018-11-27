@@ -3,18 +3,13 @@ include_recipe 'apache2::mod_wsgi'
 
 gwm = node['ganeti_webmgr']
 
-env = {
-  'GWM_CONFIG_DIR' => gwm['config_dir'].to_s,
-  'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
-}
-
 python_path = ::File.join(gwm['install_dir'], 'lib', 'python2.6', 'site-packages')
 wsgi_path = ::File.join(python_path, 'ganeti_webmgr', 'ganeti_web', 'wsgi.py')
 django_admin = ::File.join(gwm['install_dir'], 'bin', 'django-admin.py')
 
 python_execute 'collect_static' do
   command "#{django_admin} collectstatic --noinput"
-  environment env
+  environment node['ganeti_webmgr']['env']
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
 end

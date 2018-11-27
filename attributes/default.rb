@@ -16,6 +16,10 @@ end
 
 default['ganeti_webmgr']['install_dir'] = '/opt/ganeti_webmgr'
 default['ganeti_webmgr']['config_dir'] = '/opt/ganeti_webmgr/config'
+default['ganeti_webmgr']['env'] = {
+  'GWM_CONFIG_DIR' => node['ganeti_webmgr']['config_dir'].to_s,
+  'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings',
+}
 
 default['ganeti_webmgr']['static_root'] = '/opt/ganeti_webmgr/collected_static'
 default['ganeti_webmgr']['static_url'] = '/static'
