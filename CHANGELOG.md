@@ -1,5 +1,9 @@
 # CHANGELOG for ganeti_webmgr
 
+1.0.0 (2019-01-14)
+------------------
+- Chef 13 Updates
+
 0.6.1 (2018-05-23)
 ------------------
 - Switch to using poise-python
