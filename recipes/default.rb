@@ -22,71 +22,92 @@ end
 
 include_recipe 'git'
 include_recipe 'build-essential::default'
+include_recipe 'selinux_policy::install'
+
+package node['ganeti_webmgr']['packages']
+
+# the install dir *is* the virtualenv
+install_dir = node['ganeti_webmgr']['install_dir']
+
+# Create gwm user/group
+group node['ganeti_webmgr']['group'] do
+  system true
+end
+
+user node['ganeti_webmgr']['user'] do
+  home install_dir
+  group node['ganeti_webmgr']['group']
+  system true
+  action [:create, :lock]
+end
+
+selinux_policy_fcontext "#{install_dir}(/.*)?" do
+  secontext 'httpd_sys_rw_content_t'
+end
 
 # Make sure the directory for GWM exists before we try to clone to it
 directory node['ganeti_webmgr']['path'] do
-  owner node['ganeti_webmgr']['owner']
+  owner node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   recursive true
   action :create
 end
 
-no_clone = node.chef_environment == 'vagrant' &&
-           ::File.directory?(::File.join(node['ganeti_webmgr']['path'], '.git'))
+directory install_dir do
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+  recursive true
+end
 
-# clone the repo so we can run setup.sh to install
+python_virtualenv install_dir do
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+  pip_version '9.0.3'
+end
+
+db_driver =
+  case node['ganeti_webmgr']['database']['engine'].split('.').last
+  when 'mysql'
+    'MySQL-python'
+  when 'psycopg2', 'postgresql_psycopg2'
+    'psycopg2'
+  else
+    []
+  end
+
+# Install db driver (if needed)
+python_package db_driver do
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+end
+
+# We need this specific version to work with python2.6
+python_package 'pycparser' do
+  version '2.14'
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+end
+
+# clone the repo so we can install
 git node['ganeti_webmgr']['path'] do
   repository node['ganeti_webmgr']['repository']
   revision node['ganeti_webmgr']['revision']
-  user node['ganeti_webmgr']['owner']
-  group node['ganeti_webmgr']['group']
-  not_if { no_clone }
-end
-
-# The first value is for our custom config directory
-# the second is for django-admin.py
-env = {
-  'GWM_CONFIG_DIR' => node['ganeti_webmgr']['config_dir'].to_s,
-  'DJANGO_SETTINGS_MODULE' => 'ganeti_webmgr.ganeti_web.settings'
-}
-
-log 'Installing additional system packages for Ganeti Web Manager'
-node['ganeti_webmgr']['packages'].each do |pkg|
-  package pkg do
-    action :install
-  end
-end
-
-db_driver = case node['ganeti_webmgr']['database']['engine'].split('.').last
-            when 'mysql'
-              include_recipe 'mysql::client'
-              'mysql'
-            when 'psycopg2', 'postgresql_psycopg2'
-              'postgres'
-            when 'sqlite3'
-              'sqlite'
-            else
-              log "node['ganeti_webmgr']['database']['engine'] needs to
-                be set!" do
-                level :fatal
-              end
-            end
-
-# the install dir *is* the virtualenv
-install_dir = node['ganeti_webmgr']['install_dir']
-
-# use setup.sh to install GWM
-execute 'install_gwm' do
-  command "./scripts/setup.sh -D #{db_driver} -d #{install_dir}"
-  cwd node['ganeti_webmgr']['path']
-  environment env
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
-  creates node['ganeti_webmgr']['install_dir']
-  action :run
+  notifies :run, 'execute[install ganeti_webmgr]', :immediately
 end
 
-passwords = Chef::EncryptedDataBagItem.load(
+# Install GWM deps using pip directly
+# NOTE: this does not work with python_execute due to python2.6 issues
+execute 'install ganeti_webmgr' do
+  action :nothing
+  command "/opt/ganeti_webmgr/bin/pip install --cache-dir #{install_dir}/.cache/pip ."
+  cwd node['ganeti_webmgr']['path']
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+end
+
+passwords = data_bag_item(
   node['ganeti_webmgr']['databag'],
   node['ganeti_webmgr']['databag_item']
 )
@@ -96,6 +117,13 @@ secret_key = node['ganeti_webmgr']['secret_key'] || passwords['secret_key']
 web_mgr_api_key = node['ganeti_webmgr']['web_mgr_api_key'] || passwords['web_mgr_api_key']
 
 config_file = ::File.join(node['ganeti_webmgr']['config_dir'], 'config.yml')
+
+directory node['ganeti_webmgr']['config_dir'] do
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+  recursive true
+end
+
 template config_file do
   source 'config.yml.erb'
   owner node['ganeti_webmgr']['user']
@@ -110,35 +138,33 @@ template config_file do
   )
 end
 
-# these would work better as resources or library files,
-# but this works fine for now
-
 # get the path to the files we need to run commands
 venv = install_dir
 venv_bin = ::File.join(venv, 'bin')
+python = ::File.join(venv_bin, 'python')
 django_admin = ::File.join(venv_bin, 'django-admin.py')
+python_path = ::File.join(node['ganeti_webmgr']['install_dir'], 'lib', 'python2.6', 'site-packages')
+wsgi_path = ::File.join(python_path, 'ganeti_webmgr', 'ganeti_web', 'wsgi.py')
 
 # syncdb using django-admin.py
-execute 'run_syncdb' do
+python_execute 'run_syncdb' do
   command "#{django_admin} syncdb --noinput"
-  environment env
+  environment node['ganeti_webmgr']['env']
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   only_if { node['ganeti_webmgr']['migrate'] }
 end
 
 # migrate using django-admin.py
-execute 'run_migration' do
+python_execute 'run_migration' do
   command "#{django_admin} migrate"
-  environment env
+  environment node['ganeti_webmgr']['env']
   user node['ganeti_webmgr']['user']
   group node['ganeti_webmgr']['group']
   only_if { node['ganeti_webmgr']['migrate'] }
 end
 
 # run vncauthproxy setup
-log 'Setting up vncauthproxy runit script'
-
 include_recipe 'runit'
 runit_service 'vncauthproxy' do
   options(
@@ -153,4 +179,68 @@ runit_service 'flashpolicy' do
     'install_dir' => node['ganeti_webmgr']['install_dir']
   )
   only_if { node['ganeti_webmgr']['vncauthproxy']['flashpolicy_enabled'] }
+end
+
+# Use the attributes to bootstrap users if set, otherwise use databag users
+users =
+  if node['ganeti_webmgr']['superusers'].empty? && passwords['superusers'].nil?
+    []
+  elsif node['ganeti_webmgr']['superusers'].empty?
+    passwords['superusers']
+  else
+    node['ganeti_webmgr']['superusers']
+  end
+
+users.each do |user|
+  username = user['username']
+  email = user['email']
+  password = user['password']
+
+  python_execute 'bootstrap_superuser' do
+    command <<-EOS
+    #{django_admin} createsuperuser --noinput --username=#{username} --email #{email}
+    #{python} -c \"from django.contrib.auth.models import User;u=User.objects.get(username='#{username}');u.set_password('#{password}');u.save();\"
+    EOS
+    sensitive true
+    user node['ganeti_webmgr']['user']
+    group node['ganeti_webmgr']['group']
+    environment node['ganeti_webmgr']['env']
+  end
+end
+
+include_recipe 'apache2::default'
+include_recipe 'apache2::mod_wsgi'
+include_recipe 'apache2::mod_ssl' if node['ganeti_webmgr']['https_enabled']
+
+python_execute 'collect_static' do
+  command "#{django_admin} collectstatic --noinput"
+  environment node['ganeti_webmgr']['env']
+  user node['ganeti_webmgr']['user']
+  group node['ganeti_webmgr']['group']
+end
+
+web_app node['ganeti_webmgr']['application_name'] do
+  template 'gwm_apache_vhost.conf.erb'
+  server_aliases node['ganeti_webmgr']['apache']['server_aliases']
+  server_name node['ganeti_webmgr']['apache']['server_name']
+  server_port node['ganeti_webmgr']['apache']['server_port']
+  app node['ganeti_webmgr']
+  processes node['ganeti_webmgr']['apache']['processes']
+  threads node['ganeti_webmgr']['apache']['threads']
+  wsgi_process_group 'ganeti_webmgr'
+  wsgi_path wsgi_path
+  python_path python_path
+  notifies :reload, 'service[apache2]'
+end
+
+directory node['ganeti_webmgr']['haystack_whoosh_path'] do
+  owner node['apache']['user']
+  group node['apache']['group']
+end
+
+python_execute 'update haystack whoosh index' do
+  command "#{django_admin} update_index"
+  environment node['ganeti_webmgr']['env']
+  user node['apache']['user']
+  group node['apache']['group']
 end
