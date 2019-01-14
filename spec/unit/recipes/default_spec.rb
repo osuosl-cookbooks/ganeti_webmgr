@@ -113,6 +113,10 @@ describe 'ganeti_webmgr::default' do
       end
 
       it do
+        expect(chef_run.git('/opt/ganeti_webmgr_src')).to notify('execute[install ganeti_webmgr]').to(:run).immediately
+      end
+
+      it do
         expect(chef_run).to_not run_execute('install ganeti_webmgr')
       end
 
