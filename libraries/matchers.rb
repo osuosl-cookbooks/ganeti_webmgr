@@ -6,12 +6,4 @@ if defined?(ChefSpec)
       resource_name
     )
   end
-
-  def enable_web_app(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(
-      :web_app,
-      :enable,
-      resource_name
-    )
-  end
 end
