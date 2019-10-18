@@ -10,8 +10,7 @@ node.default['mariadb']['server_root_password'] = server_password
 node.default['mariadb']['use_default_repository'] = true
 
 include_recipe 'mariadb::server'
-include_recipe 'build-essential'
-
+build_essential 'install packages for compiling C programs'
 mysql2_chef_gem_mariadb 'default'
 
 connection_info = {
