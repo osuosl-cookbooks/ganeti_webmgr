@@ -3,7 +3,7 @@ require 'chefspec/berkshelf'
 
 CENTOS_6 = {
   platform: 'centos',
-  version: '6.9',
+  version: '6',
 }.freeze
 
 ALL_PLATFORMS = [
