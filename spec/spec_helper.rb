@@ -11,7 +11,7 @@ ALL_PLATFORMS = [
 ].freeze
 
 RSpec.configure do |config|
-  config.log_level = :fatal
+  config.log_level = :warn
 end
 
 shared_context 'common' do
