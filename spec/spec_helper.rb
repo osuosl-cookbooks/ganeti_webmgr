@@ -1,8 +1,6 @@
 require 'chefspec'
 require 'chefspec/berkshelf'
 
-ChefSpec::Coverage.start! { add_filter 'ganeti_webmgr' }
-
 CENTOS_6 = {
   platform: 'centos',
   version: '6.9',
