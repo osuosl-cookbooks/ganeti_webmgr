@@ -21,7 +21,7 @@ python_runtime '2' do
 end
 
 include_recipe 'git'
-build_essential 'install packages for compiling C programs'
+build_essential 'ganeti_webmgr'
 include_recipe 'selinux_policy::install'
 
 package node['ganeti_webmgr']['packages']
