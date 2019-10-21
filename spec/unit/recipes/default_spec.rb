@@ -35,6 +35,10 @@ describe 'ganeti_webmgr::default' do
       end
 
       it do
+        expect(chef_run).to install_build_essential('ganeti_webmgr')
+      end
+
+      it do
         expect(chef_run).to install_package(['libffi-devel', 'openssl-devel'])
       end
 
