@@ -42,11 +42,6 @@ suites:
       - recipe[gwm_test]
       - recipe[ganeti_webmgr::default]
     attributes:
-      osl-mysql:
-        enable_percona_client: true
-      percona:
-        encrypted_data_bag: percona
-        encrypted_data_bag_secret_file: "/etc/chef/encrypted_data_bag_secret"
       ganeti_webmgr:
         database:
           engine: 'django.db.backends.mysql'

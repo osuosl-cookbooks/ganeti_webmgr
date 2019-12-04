@@ -1,46 +1,34 @@
-passwords = data_bag_item('percona', 'mysql')
+passwords = data_bag_item('ganeti_webmgr', 'passwords')
 db_host = node['ganeti_webmgr']['database']['host']
-db_port = node['ganeti_webmgr']['database']['port']
-#server_user = node['ganeti_webmgr']['db_server']['user'] || passwords['db_server']['user']
-server_user = 'root'
-server_password = node['ganeti_webmgr']['db_server']['password'] || passwords['root']
+server_user = node['ganeti_webmgr']['db_server']['user'] || passwords['db_server']['user']
+server_password = node['ganeti_webmgr']['db_server']['password'] || passwords['db_server']['password']
 db_user = node['ganeti_webmgr']['database']['user']
-#db_pass = node['ganeti_webmgr']['database']['password'] || passwords['db_password']
-db_pass = 'vagrant'
+db_pass = node['ganeti_webmgr']['database']['password'] || passwords['db_password']
 
 node.default['mariadb']['server_root_password'] = server_password
 node.default['mariadb']['use_default_repository'] = true
 
-#include_recipe 'mariadb::server'
-include_recipe 'osl-mysql::server'
-build_essential 'gwm_test'
+build_essential 'gwm'
 
-#mysql2_chef_gem_mariadb 'default'
-mysql2_chef_gem 'default' do
-    provider Chef::Provider::Mysql2ChefGem::Percona
-    action :install
+mariadb_server_install 'default' do
+  password server_password
+  version '10.1' # required for CentOS 6
+  action [:install, :create]
 end
 
-connection_info = {
-  host: db_host,
-  user: server_user || 'root',
-  password: server_password
-}
+package 'MariaDB-devel'
 
-#mysql_database 'gwm_db' do
-mysql_database node['ganeti_webmgr']['database']['name'] do
-  connection connection_info
-  action :create
+mariadb_database node['ganeti_webmgr']['database']['name'] do
+  host db_host
+  user server_user
+  password server_password
 end
 
-#mysql_database_user 'gwm_user' do
-mysql_database_user db_user do
-  #database_name 'gwm_db'
+mariadb_user db_user do
   database_name node['ganeti_webmgr']['database']['name']
+  ctrl_password server_password
   password db_pass
-  host '172.17.%'
-  connection connection_info
-  #privileges [:all]
+  host 'localhost'
   action [:create, :grant]
 end
 
