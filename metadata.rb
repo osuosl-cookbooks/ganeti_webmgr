@@ -15,7 +15,8 @@ depends          'git'
 depends          'hostsfile'
 depends          'openssl'
 depends          'poise-python'
-depends          'runit'
+# runit >= 5.0.0 requires chef >= 14. This allows backward-compatible with chef 13
+depends          'runit', '~> 4.3.1'
 depends          'selinux_policy'
 depends          'sqlite'
 

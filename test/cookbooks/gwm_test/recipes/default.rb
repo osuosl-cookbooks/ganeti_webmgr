@@ -1,6 +1,5 @@
 passwords = data_bag_item('ganeti_webmgr', 'passwords')
 db_host = node['ganeti_webmgr']['database']['host']
-db_port = node['ganeti_webmgr']['database']['port']
 server_user = node['ganeti_webmgr']['db_server']['user'] || passwords['db_server']['user']
 server_password = node['ganeti_webmgr']['db_server']['password'] || passwords['db_server']['password']
 db_user = node['ganeti_webmgr']['database']['user']
@@ -9,27 +8,27 @@ db_pass = node['ganeti_webmgr']['database']['password'] || passwords['db_passwor
 node.default['mariadb']['server_root_password'] = server_password
 node.default['mariadb']['use_default_repository'] = true
 
-include_recipe 'mariadb::server'
-include_recipe 'build-essential'
+build_essential 'gwm'
 
-mysql2_chef_gem_mariadb 'default'
-
-connection_info = {
-  host: db_host,
-  port: db_port,
-  username: server_user || 'root',
-  password: server_password,
-}
-
-mysql_database node['ganeti_webmgr']['database']['name'] do
-  connection connection_info
+mariadb_server_install 'default' do
+  password server_password
+  version '10.1' # required for CentOS 6
+  action [:install, :create]
 end
 
-mysql_database_user db_user do
-  connection connection_info
+package 'MariaDB-devel'
+
+mariadb_database node['ganeti_webmgr']['database']['name'] do
+  host db_host
+  user server_user
+  password server_password
+end
+
+mariadb_user db_user do
   database_name node['ganeti_webmgr']['database']['name']
-  privileges [:all]
+  ctrl_password server_password
   password db_pass
+  host 'localhost'
   action [:create, :grant]
 end
 

@@ -1,11 +1,9 @@
 require 'chefspec'
 require 'chefspec/berkshelf'
 
-ChefSpec::Coverage.start! { add_filter 'ganeti_webmgr' }
-
 CENTOS_6 = {
   platform: 'centos',
-  version: '6.9',
+  version: '6',
 }.freeze
 
 ALL_PLATFORMS = [
@@ -13,7 +11,7 @@ ALL_PLATFORMS = [
 ].freeze
 
 RSpec.configure do |config|
-  config.log_level = :fatal
+  config.log_level = :warn
 end
 
 shared_context 'common' do

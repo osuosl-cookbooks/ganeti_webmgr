@@ -35,6 +35,9 @@ suites:
             email: foo@example.org
 
   - name: mysql
+    driver:
+      name: openstack
+      flavor_ref: 'm1.large'
     run_list:
       - recipe[gwm_test]
       - recipe[ganeti_webmgr::default]
