@@ -5,7 +5,7 @@ license          'Apache-2.0'
 chef_version     '>= 12.18' if respond_to?(:chef_version)
 description      'Installs/Configures Ganeti Web Manager'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '1.0.0'
+version          '1.1.0'
 source_url       'https://github.com/osuosl-cookbooks/ganeti_webmgr'
 issues_url       'https://github.com/osuosl-cookbooks/ganeti_webmgr/issues'
 depends          'apache2', '~> 4.0.0'

@@ -1,5 +1,9 @@
 # CHANGELOG for ganeti_webmgr
 
+1.1.0 (2019-12-04)
+------------------
+- Chef 14 compatibility fixes
+
 1.0.0 (2019-01-14)
 ------------------
 - Chef 13 Updates
