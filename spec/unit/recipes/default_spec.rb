@@ -153,6 +153,7 @@ describe 'ganeti_webmgr::default' do
             'port' => '8888',
             'ip' => '0.0.0.0',
             'install_dir' => '/opt/ganeti_webmgr',
+            :env_dir => '/etc/sv/vncauthproxy/env',
           }
         )
       end
@@ -161,6 +162,7 @@ describe 'ganeti_webmgr::default' do
         expect(chef_run).to enable_runit_service('flashpolicy').with(
           options: {
             'install_dir' => '/opt/ganeti_webmgr',
+            :env_dir => '/etc/sv/flashpolicy/env',
           }
         )
       end
