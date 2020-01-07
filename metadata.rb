@@ -15,7 +15,7 @@ depends          'git'
 depends          'hostsfile'
 depends          'openssl'
 depends          'poise-python'
-depends          'runit'
+depends          'runit', '>= 5.0.0'
 depends          'selinux_policy'
 depends          'sqlite'
 
