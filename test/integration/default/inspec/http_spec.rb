@@ -20,7 +20,7 @@ gwm_command =
   'curl -so /dev/null -c c.txt -b c.txt http://localhost/accounts/login/ && ' \
   'token=$(grep csrftoken c.txt | cut -f7) && ' \
   'curl -H \'Referer: http://localhost/accounts/login/\' -c c.txt -b c.txt -d ' \
-	'"csrfmiddlewaretoken=${token}&username=admin&password=admin&next=%2F" -v -L ' \
+  '"csrfmiddlewaretoken=${token}&username=admin&password=admin&next=%2F" -v -L ' \
   'http://localhost/accounts/login/ 2>&1'
 
 describe command(gwm_command) do

@@ -1,0 +1,51 @@
+---
+verifier:
+  name: inspec
+provisioner:
+  name: chef_solo
+  data_bags_path: "test/integration/data_bags"
+  encrypted_data_bag_secret_key_path: "test/integration/encrypted_data_bag_secret"
+  attributes:
+    ganeti_webmgr:
+      revision: master
+      debug: true
+      migrate: true
+      database:
+        name: ganeti_webmgr
+        user: ganeti_webmgr
+        password: ganeti_webmgr
+        host: localhost
+      apache:
+        server_aliases:
+          - localhost
+
+suites:
+  - name: default
+    run_list:
+      - recipe[ganeti_webmgr::default]
+    attributes:
+      ganeti_webmgr:
+        database:
+          engine: 'django.db.backends.sqlite3'
+          name: /opt/ganeti_webmgr/ganeti_webmgr
+        superusers:
+          -
+            username: admin
+            password: admin
+            email: foo@example.org
+
+  - name: mysql
+    driver:
+      name: openstack
+      flavor_ref: 'm1.large'
+    run_list:
+      - recipe[gwm_test]
+      - recipe[ganeti_webmgr::default]
+    attributes:
+      ganeti_webmgr:
+        database:
+          engine: 'django.db.backends.mysql'
+        https_enabled: true
+        certificate_key_file: /etc/pki/tls/private/wildcard.key
+        certificate_file: /etc/pki/tls/certs/wildcard.pem
+        certificate_chain_file: /etc/pki/tls/certs/wildcard-bundle.crt
