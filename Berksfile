@@ -5,6 +5,7 @@ solver :ruby, :required
 cookbook 'base', git: 'git@github.com:osuosl-cookbooks/base'
 cookbook 'firewall', git: 'git@github.com:osuosl-cookbooks/firewall'
 cookbook 'gwm_test', path: 'test/cookbooks/gwm_test'
+cookbook 'munin', git: 'git@github.com:osuosl-cookbooks/munin'
 cookbook 'osl-munin', git: 'git@github.com:osuosl-cookbooks/osl-munin'
 cookbook 'osl-mysql', git: 'git@github.com:osuosl-cookbooks/osl-mysql'
 cookbook 'osl-nrpe', git: 'git@github.com:osuosl-cookbooks/osl-nrpe'
