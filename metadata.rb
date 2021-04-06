@@ -4,7 +4,7 @@ maintainer_email 'chef@osuosl.org'
 source_url       'https://github.com/osuosl-cookbooks/ganeti_webmgr'
 issues_url       'https://github.com/osuosl-cookbooks/ganeti_webmgr/issues'
 license          'Apache-2.0'
-chef_version     '>= 14.0'
+chef_version     '>= 16.0'
 description      'Installs/Configures Ganeti Web Manager'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '1.2.0'
